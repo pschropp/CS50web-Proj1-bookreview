@@ -1,3 +1,3 @@
 # Project 1
 
-Web Programming with Python and JavaScript
+CS50web Project1: Unsing Flask for BookReview page with Heroku PostreSQL and Goodreads API
