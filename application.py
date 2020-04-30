@@ -18,7 +18,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
-from helpers import apology, login_required
+from helpers import errordisplay, login_required
 
 app = Flask(__name__)
 
@@ -64,15 +64,15 @@ def register():
 
         # Ensure username was submitted
         if not username:
-            return apology("must provide username", 403)
+            return errordisplay("must provide username", 403)
 
         # Ensure username was submitted
         elif not useremail:
-            return apology("must provide mail address", 403)
+            return errordisplay("must provide mail address", 403)
 
         # Ensure password was submitted
         elif not password:
-            return apology("must provide password", 403)
+            return errordisplay("must provide password", 403)
 
         # Query database for username and check, if username exists already    
         rows = db.execute("SELECT * FROM users WHERE username = :username",         #pylint: disable=no-member
@@ -89,7 +89,7 @@ def register():
             ### maybe via separate route "newlogin" which returns to normal login just adding a differen title
 
         else:                  
-            return apology("username already exists, please choose another username or login", 403)
+            return errordisplay("username already exists, please choose another username or login", 403)
 
         # Redirect user to login page
         return redirect("/login")
@@ -111,11 +111,11 @@ def login():
 
         # Ensure username was submitted
         if not request.form.get("username"):
-            return apology("must provide username", 403)
+            return errordisplay("must provide username", 403)
 
         # Ensure password was submitted
         elif not request.form.get("password"):
-            return apology("must provide password", 403)
+            return errordisplay("must provide password", 403)
 
         # Query database for username
         rows = db.execute("SELECT * FROM users WHERE username = :username", #pylint: disable=no-member
@@ -123,7 +123,7 @@ def login():
         
         # Ensure username exists and password is correct; check_password_hash is imported from werkzeug
         if len(rows) != 1 or not check_password_hash(rows[0]["pwdhash"], request.form.get("password")):
-            return apology("invalid username and/or password", 403)
+            return errordisplay("invalid username and/or password", 403)
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["username"]
@@ -149,31 +149,12 @@ def logout():
 
 
 
-
-
-'''
-# Errorhandling via error.html
-def errorhandler(e):
-    """Handle error"""
-    if not isinstance(e, HTTPException):
-        e = InternalServerError()
-    return render_template("error.html", errormsg=e.name, errorcode=e.code),code
-
-# Listen for errors
-for code in default_exceptions:
-    app.errorhandler(code)(errorhandler)
-'''
-
-
-
-
-#Error handling for cat pic using apology function in helpers.py and apology.html
 # Errorhandling
 def errorhandler(e):
     """Handle error"""
     if not isinstance(e, HTTPException):
         e = InternalServerError()
-    return apology(e.name, e.code)
+    return errordisplay(e.name, e.code)
 
 # Listen for errors
 for code in default_exceptions:
