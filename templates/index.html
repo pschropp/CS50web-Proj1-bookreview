@@ -6,13 +6,13 @@ Custom Title
 
 {% block main %}
 <!-- implement: 
-                2) once logged in, user should be taken to search page. search bei forms for a) isbn, b) title, c) author.
-                then show matching results (or message, if no match). search also has to work if user only provieds part
-                of the name, i.e. use LIKE in SQL query
-                3) when clicking on book in search result, show page with details about the book:
+                2) once logged in, user should be taken to the search page (probably on index.html). search forms for 
+                a) isbn, b) title, c) author. show matching results (or message, if no match). 
+                search also has to work if user only provieds part of the name ==> use LIKE in SQL query
+                3) when clicking on book in search result, show page (@login required) with details about the book:
                     a) title b) author c) publication year d) ISBN number e) all reviews that users have left on my page
                     4) also show on that page the f) avg. rating and the g) number of ratings  on Goodreads via their API 
-                5) on book page (3): let users submit a review: a) rating (1-5 stars) b) text about book
+                5) on book page (3, @login required): let users submit a review: a) rating (1-5 stars) b) text about book
                     c) user should only be able to write one review per book.
 
 -->

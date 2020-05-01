@@ -11,27 +11,33 @@ db = scoped_session(sessionmaker(bind=engine))
 def main():
     f = open("books.csv")
     reader = csv.reader(f)
-    
-    """ example from lectures
 
     #loop to read line from file and insert into db
-    for origin, destination, duration in reader:
-        db.execute("INSERT INTO flights (origin, destination, duration) VALUES (:origin, :destination, :duration)",
-                    {"origin": origin, "destination": destination, "duration": duration})
-        print(f"Added flight from {origin} to {destination} lasting {duration} minutes.")
+    for isbn, title, author, year in reader:
+        db.execute("INSERT INTO books (isbn, title, author, year) VALUES (:isbn, :title, :author, :year)",
+                    {"isbn": isbn, "title": title, "author": author, "year": year})   
     db.commit()
-    """
-
+    print("Added books to database.")
 
 
 """
-DB with table
+DB schema should be:
     users:
         username
         useremail
         pwdhash
-    
-    more tables
+    books:
+        isbn    primary key
+        title
+        author
+        year
+    reviews:
+        rev_id  primary key integer and autoinc
+        isbn    foreign key -> books.isbn
+        reviewer    foreign key -> users.username
+        rev_rating  integer (1-5)
+        rev_text    free text
+
 """
 
 

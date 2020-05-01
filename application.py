@@ -42,9 +42,8 @@ db = scoped_session(sessionmaker(bind=engine))
 # Set API-Key for Goodreads
 GR_API_Key = "***REMOVED***"
 
-@app.route("/")
-#if needed, uncomment decorator login_required 
-# @login_required
+@app.route("/") 
+@login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
 def index():
     #this should render the search, if user is logged in
     return render_template("index.html")
@@ -126,7 +125,7 @@ def login():
             return errordisplay("invalid username and/or password", 403)
 
         # Remember which user has logged in
-        session["user_id"] = rows[0]["username"]
+        session["username"] = rows[0]["username"]
 
         # Redirect user to home page
         return redirect("/")
