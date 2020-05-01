@@ -42,9 +42,5 @@ DB schema should be:
 
 
 
-
-
-
-
 if __name__ == "__main__":
     main()
