@@ -34,7 +34,7 @@ DB schema should be:
     reviews:
         rev_id  primary key integer and autoinc
         isbn    foreign key -> books.isbn
-        reviewer    foreign key -> users.username
+        username    foreign key -> users.username
         rev_rating  integer (1-5)
         rev_text    free text
 

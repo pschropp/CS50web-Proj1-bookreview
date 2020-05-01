@@ -11,15 +11,30 @@ Custom Title
                 search also has to work if user only provieds part of the name ==> use LIKE in SQL query
                 3) when clicking on book in search result, show page (@login required) with details about the book:
                     a) title b) author c) publication year d) ISBN number e) all reviews that users have left on my page
-                    4) also show on that page the f) avg. rating and the g) number of ratings  on Goodreads via their API 
-                5) on book page (3, @login required): let users submit a review: a) rating (1-5 stars) b) text about book
-                    c) user should only be able to write one review per book.
+                    4) also show on that page the f) avg. rating and the g) number of ratings  on Goodreads via their API
+                    + Button (link, get) to write an own review 
+                5) review page: @login required): GET: let users submit a review via a form: 
+                    a) rating (1-5 stars) b) text about book
+                    c) user should only be able to write only one review per book.
+                    form button to POST
 
 -->
 
+<h1>Search Book Review for<h1>
 
-<h1>Title here</h1>
-put body here
+<!-- form for booksearch-->
+<form action="/login" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="isbn" placeholder="ISBN" type="text">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="title" placeholder="Title" type="text">
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="author" placeholder="Author" type="text">
+        </div>
+        <button class="btn btn-primary" type="submit">Search</button>
+    </form>
 
 
 {% endblock %}
