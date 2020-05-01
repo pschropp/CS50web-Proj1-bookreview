@@ -6,14 +6,15 @@ Custom Title
 
 {% block main %}
 <!-- implement: 
-                2) once logged in, user should be taken to the search page (probably on index.html). search forms for 
+                2) once logged in, user should be taken to the search page (on index.html). search forms for 
                 a) isbn, b) title, c) author. show matching results (or message, if no match). 
                 search also has to work if user only provieds part of the name ==> use LIKE in SQL query
-                3) when clicking on book in search result, show page (@login required) with details about the book:
+                3) show search results page with links to the bookdetails
+                4) when clicking on book in search result, show page (@login required) with details about the book:
                     a) title b) author c) publication year d) ISBN number e) all reviews that users have left on my page
-                    4) also show on that page the f) avg. rating and the g) number of ratings  on Goodreads via their API
+                    5) also show on that page the f) avg. rating and the g) number of ratings  on Goodreads via their API
                     + Button (link, get) to write an own review 
-                5) review page: @login required): GET: let users submit a review via a form: 
+                6) review page: @login required): GET: let users submit a review via a form: 
                     a) rating (1-5 stars) b) text about book
                     c) user should only be able to write only one review per book.
                     form button to POST
@@ -23,7 +24,7 @@ Custom Title
 <h1>Search Book Review for<h1>
 
 <!-- form for booksearch-->
-<form action="/login" method="post">
+<form action="/searchresults" method="post">
         <div class="form-group">
             <input autocomplete="off" autofocus class="form-control" name="isbn" placeholder="ISBN" type="text">
         </div>

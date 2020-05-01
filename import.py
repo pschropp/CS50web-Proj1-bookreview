@@ -27,16 +27,16 @@ DB schema should be:
         useremail
         pwdhash
     books:
-        isbn    primary key
-        title
-        author
-        year
+        isbn    CHAR primary key
+        title   VARCHAR
+        author  VARCHAR
+        year    CHAR
     reviews:
-        rev_id  primary key integer and autoinc
-        isbn    foreign key -> books.isbn
-        username    foreign key -> users.username
+        rev_id  SERIAL Primary Key
+        isbn    CHAR foreign key -> books.isbn
+        username    VARCHAR foreign key -> users.username
         rev_rating  integer (1-5)
-        rev_text    free text
+        rev_text    VARCHAR
 
 """
 

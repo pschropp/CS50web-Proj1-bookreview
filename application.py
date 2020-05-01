@@ -45,7 +45,7 @@ GR_API_Key = "***REMOVED***"
 @app.route("/") 
 @login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
 def index():
-    #this should render the search, if user is logged in
+    #this renders the searchforms, if user is logged in
     return render_template("index.html")
 
 
@@ -144,6 +144,37 @@ def logout():
 
     # Redirect user to login form
     return redirect("/")
+
+
+@app.route("/searchresults", methods=["GET", "POST"])
+def searchresults():
+    """generate and render search results for book search"""
+
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        session["results"] = [] #delete search results list of user
+        #store inputs in variables
+        isbn = request.form.get("isbn")
+        like_isbn = "%" + isbn.replace("*", "") + "%"
+        title = request.form.get("title")
+        author = request.form.get("author")
+
+        # start query based on actually filled input fields
+        if isbn:
+            session["results"] = db.execute("SELECT * FROM books WHERE isbn LIKE :isbn", #pylint: disable=no-member
+                                                    {"isbn":like_isbn}).fetchall()
+            return render_template("searchresults.html", booklist=session["results"])  
+
+
+        # no inputs specified
+        else:
+            return errordisplay("must provide at least one search criterion", 403)
+
+        # User reached route via GET (e.g. by typing in URL bar or via search link in navbar)
+        # problem here!!!!!
+    else:
+        return redirect("/")
 
 
 
