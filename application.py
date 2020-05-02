@@ -181,13 +181,36 @@ def searchresults():
 
 
 
-@app.route("/bookdetails") # build route with variable for isbn, isbn passed from bookdetails-link
+@app.route("/bookdetails/<string:isbn>") # build route with variable for isbn, isbn passed from bookdetails-link
 @login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
-def bookdetails():
+def bookdetails(isbn):
     """generate and render search results for book search"""
+    session["details"] = []
+    session["details"] = db.execute("SELECT * FROM books WHERE isbn = :isbn", #pylint: disable=no-member
+                                        {"isbn":isbn}).fetchone()
+
+
+    """show reviews (own + from API)"""
+
+
+    return render_template("bookdetails.html", bookdet=session["details"]) 
 
     
 
+
+@app.route("/composereview", methods=["GET", "POST"]) # build route with variable for isbn, isbn passed from bookdetails-link
+@login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
+def composereview():
+    """generate and render search results for book search"""
+    if request.method == "POST":
+
+        """ to be coded """
+        isbn = request.form["compose-btn"]
+
+        return isbn #als test
+
+    else:
+        return testget #als test
 
 
 
