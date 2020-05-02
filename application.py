@@ -1,5 +1,5 @@
 """ 
-set environment variables in terminal before flask run:
+set environment variables in terminal before flask run or use bash script SetEnvInTerminal on Mac Desktop:
 cd DEV/CS50-WebDev/Projects/project1
 export FLASK_APP=application.py
 export FLASK_DEBUG=1
@@ -147,6 +147,7 @@ def logout():
 
 
 @app.route("/searchresults", methods=["GET", "POST"])
+@login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
 def searchresults():
     """generate and render search results for book search"""
 
@@ -167,14 +168,25 @@ def searchresults():
             return render_template("searchresults.html", booklist=session["results"])  
 
 
+            """ !!!code for other input fields here!!! """
+
+
         # no inputs specified
         else:
             return errordisplay("must provide at least one search criterion", 403)
 
-        # User reached route via GET (e.g. by typing in URL bar or via search link in navbar)
-        # problem here!!!!!
+        # User reached route via GET (mainly via search link in navbar)
     else:
         return redirect("/")
+
+
+
+@app.route("/bookdetails") # build route with variable for isbn, isbn passed from bookdetails-link
+@login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
+def bookdetails():
+    """generate and render search results for book search"""
+
+    
 
 
 
