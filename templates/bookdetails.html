@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Book Details
+{% endblock %}
+
+{% block main %}
+<!-- implement: add all reviews that users have left on my page
+                    5) also show on that page the f) avg. rating and the g) number of ratings  on Goodreads via their API
+                    + Button (link, get) to write an own review 
+-->
+
+<h1>Reviews for: </h1>
+
+<!-- Table to display chosen book -->
+<table class="table">
+    <thead>
+        <tr>
+            <th>ISBN</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Published</th>
+        </tr>
+    </thead>
+    <tbody>
+            <tr>
+                <td> {{ bookdet.isbn }} </td> 
+                <td> {{ bookdet.title }} </td>
+                <td> {{ bookdet.author }} </td>
+                <td> {{ bookdet.year }} </td>
+            </tr>
+    </tbody>
+</table>
+
+<!-- link as a button (using bootstrap class) to composereview as GET, inlcuding isbn -->
+<a class="btn btn-primary" type="button" href="{{ url_for('composereview', isbn=bookdet.isbn) }}">Compose Review</a>
+
+
+{% endblock %}

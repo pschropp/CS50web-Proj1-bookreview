@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+
+{% block title %}
+Book Details
+{% endblock %}
+
+{% block main %}
+<!-- show search results page with links to the bookdetails -->
+
+{% if booklist|length %}
+
+<!-- Table to display results Convert to links to bookdetails page -->
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>ISBN</th>
+                <th>Title</th>
+                <th>Author</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for book in booklist %}
+                <tr>
+                    <td> <a href="{{ url_for('bookdetails', isbn=book.isbn) }}"> {{ book.isbn }} </a> </td> 
+                    <td> <a href="{{ url_for('bookdetails', isbn=book.isbn) }}"> {{ book.title }} </a> </td>
+                    <td> <a href="{{ url_for('bookdetails', isbn=book.isbn) }}"> {{ book.author }} </a> </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+{% else %}<
+    h1>No books with these properties found</h1>
+{% endif %}
+
+
+{% endblock %}

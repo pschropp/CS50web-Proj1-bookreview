@@ -1,0 +1,7 @@
+#!/bin/bash
+
+cd DEV/CS50-WebDev/Projects/project1
+export FLASK_APP=application.py
+export FLASK_DEBUG=1
+export DATABASE_URL=postgres://***REMOVED***:***REMOVED***@***REMOVED***:***REMOVED***/***REMOVED***
+bash;
