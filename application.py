@@ -198,42 +198,39 @@ def bookdetails(isbn):
     
 
 
-@app.route("/composereview", methods=["GET", "POST"]) # build route with variable for isbn, isbn passed from bookdetails-link
+@app.route("/composereview/<string:isbn>", methods=["GET", "POST"]) # build route with variable for isbn, isbn passed from bookdetails-link
 @login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
-def composereview():
+def composereview(isbn):
     """generate and render search results for book search"""
 
-    if request.method == "POST":
-        if request.form["compose-btn"]: #check if request is made by the compose button from the bookdetails page
-            #read isbn from button value on bookdetails page
-            isbn = request.form["compose-btn"]
+    if request.method == "GET":
 
-            if db.execute("SELECT * FROM reviews WHERE isbn = :isbn AND username = :username", #pylint: disable=no-member
-                            {"isbn": isbn, "username": session["username"]}).rowcount == 0:
-                #allow review, prepare label for input field and have composereview page rendered for input
-                book = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
-                return render_template("composereview.html", isbn=isbn, title=book.title, author=book.author, year=book.year)
+        if db.execute("SELECT * FROM reviews WHERE isbn = :isbn AND username = :username", #pylint: disable=no-member
+                        {"isbn": isbn, "username": session["username"]}).rowcount == 0:
+            #allow review, prepare label for input field and have composereview page rendered for input
+            book = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+            return render_template("composereview.html", isbn=isbn, title=book.title, author=book.author, year=book.year)
 
-            else: #i.e. if user has already written a review for that isbn
-                return errordisplay("You have already written a review for this book", 403) 
+        else: #i.e. if user has already written a review for that isbn
+            return errordisplay("You have already written a review for this book", 403) 
+    
+
+    elif request.method == "POST":
+        # take review from reviewtextfield on composereview.html and radiobutton rating and save in db table reviews
+        rev_rating = request.form.get("ratingRadioOptions")
+        rev_text = request.form.get("reviewtextfield")
+        if rev_rating == None:
+            return errordisplay("Please rate the book (1 - 5)", 403)
+        if len(rev_text) == 0 or len(rev_text) > 9999:
+            return errordisplay("Please enter a review text (1-9999 characters)", 403)
+ 
+        db.execute("INSERT INTO reviews (isbn, username, rev_rating, rev_text) VALUES (:isbn, :username, :rev_rating, :rev_text)", 
+                        {"isbn": isbn, "username": session["username"], "rev_rating": rev_rating, "rev_text": rev_text})
+        db.commit()
         
-
-        if request.form["sendrev-btn"]: #check if request is made by the send button from the composereview page
-            # take review from reviewtextfield on composereview.html and radiobutton rating and save in db table reviews
-            rev_rating = request.form.get("ratingRadioOptions")
-            rev_text = request.form.get("reviewtextfield")
-            if rev_rating not in range(1,6) or len(rev_text) ==0 or len(rev_text) > 9999:
-                return errordisplay("Please choose a rating and enter a review text (1-9999 characters)", 403)
-            
-            db.execute("INSERT INTO reviews (rev_rating, rev_text) VALUES (:rev_rating, :rev_text)", 
-                            {"rev_rating": rev_rating, "rev_text": rev_text})
-            db.commit()
-
-        else: 
-            return errordisplay("Bad request. How did you get here?", 400)
-
-    else: #for GET?????
-        return "testget" #als test
+        # !!!!render proper return statement 
+        return "review submitted"
+        
 
 
 
