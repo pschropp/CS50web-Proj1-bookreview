@@ -33,7 +33,9 @@ Book Details
 </table>
 
 <!-- link as a button (using bootstrap class) to composereview as GET, inlcuding isbn -->
-<a class="btn btn-primary" type="button" href="{{ url_for('composereview', isbn=bookdet.isbn) }}">Compose Review</a>
-
-
+{% if hidebutton is sameas false %}
+    <a class="btn btn-primary" type="button" href="{{ url_for('composereview', isbn=bookdet.isbn) }}">Compose Review</a>
+{% else %}
+<h3> You have already written a review for this book </h3>
+{% endif %}
 {% endblock %}

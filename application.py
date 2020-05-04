@@ -10,7 +10,7 @@ flask run
 import os
 import requests
 
-from flask import Flask, session, flash, jsonify, redirect, render_template, request
+from flask import Flask, session, flash, jsonify, redirect, render_template, request, url_for
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -189,11 +189,19 @@ def bookdetails(isbn):
     session["details"] = db.execute("SELECT * FROM books WHERE isbn = :isbn", #pylint: disable=no-member
                                         {"isbn":isbn}).fetchone()
 
+        #hide compose review button on bookdetails.html, if user has already posted a review
+    if db.execute("SELECT * FROM reviews WHERE isbn = :isbn AND username = :username", #pylint: disable=no-member
+                        {"isbn": isbn, "username": session["username"]}).rowcount > 0:
+        hidebutton=True
+    else:
+        hidebutton=False
+
 
     """show reviews (own + from API)"""
 
 
-    return render_template("bookdetails.html", bookdet=session["details"]) 
+
+    return render_template("bookdetails.html", bookdet=session["details"], hidebutton=hidebutton) 
 
     
 
@@ -214,7 +222,6 @@ def composereview(isbn):
         else: #i.e. if user has already written a review for that isbn
             return errordisplay("You have already written a review for this book", 403) 
     
-
     elif request.method == "POST":
         # take review from reviewtextfield on composereview.html and radiobutton rating and save in db table reviews
         rev_rating = request.form.get("ratingRadioOptions")
@@ -227,9 +234,9 @@ def composereview(isbn):
         db.execute("INSERT INTO reviews (isbn, username, rev_rating, rev_text) VALUES (:isbn, :username, :rev_rating, :rev_text)", 
                         {"isbn": isbn, "username": session["username"], "rev_rating": rev_rating, "rev_text": rev_text})
         db.commit()
-        
-        # !!!!render proper return statement 
-        return "review submitted"
+        # flash sucess message on next page (will be back to bookdetails) 
+        flash("Your review has been submitted. Thank you!")
+        return redirect(url_for("bookdetails", isbn=isbn))
         
 
 
