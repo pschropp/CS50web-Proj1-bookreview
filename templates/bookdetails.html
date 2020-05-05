@@ -5,7 +5,7 @@ Book Details
 {% endblock %}
 
 {% block main %}
-<!-- implement: add all reviews that users have left on my page
+<!-- implement: add all reviews + avg. rating (+number of ratings) that users have left on my page
                     5) also show on that page the f) avg. rating and the g) number of ratings  on Goodreads via their API
                     + Button (link, get) to write an own review 
 -->
@@ -20,6 +20,7 @@ Book Details
             <th>Title</th>
             <th>Author</th>
             <th>Published</th>
+            <th>Avg. Rating here (max. 5.0) </th>
         </tr>
     </thead>
     <tbody>
@@ -28,6 +29,7 @@ Book Details
                 <td> {{ bookdet.title }} </td>
                 <td> {{ bookdet.author }} </td>
                 <td> {{ bookdet.year }} </td>
+                <td> {{ '%0.1f' % own_avg_rating|float }} #xyz <!-- implement no. of ratings here --> </td>
             </tr>
     </tbody>
 </table>
@@ -35,7 +37,19 @@ Book Details
 <!-- link as a button (using bootstrap class) to composereview as GET, inlcuding isbn -->
 {% if hidebutton is sameas false %}
     <a class="btn btn-primary" type="button" href="{{ url_for('composereview', isbn=bookdet.isbn) }}">Compose Review</a>
-{% else %}
-<h3> You have already written a review for this book </h3>
 {% endif %}
+
+
+<!-- show reviews and ratings here -->
+<div>
+        <!--
+        
+         use if else before, to checkif entries available
+        <h3> No ratings/reviews for this book. Be the first to add one! </h3>
+        -->
+</div>
+<div>
+
+</div>
+
 {% endblock %}

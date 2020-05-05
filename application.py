@@ -192,16 +192,24 @@ def bookdetails(isbn):
         #hide compose review button on bookdetails.html, if user has already posted a review
     if db.execute("SELECT * FROM reviews WHERE isbn = :isbn AND username = :username", #pylint: disable=no-member
                         {"isbn": isbn, "username": session["username"]}).rowcount > 0:
+        flash("You have already written a review for this book")
         hidebutton=True
     else:
         hidebutton=False
 
+    #### put calc of entries (=no of ratings) here and use with if. 
+
+    own_reviewsisbn=db.execute("SELECT * FROM reviews WHERE isbn = :isbn", #pylint: disable=no-member
+                                    {"isbn": isbn}).fetchall()
+
+    # calculate avg. rating for specific book
+    own_avg_rating = db.execute("SELECT AVG(rev_rating) FROM reviews WHERE isbn = :isbn", #pylint: disable=no-member
+                                    {"isbn": isbn}).fetchone()
 
     """show reviews (own + from API)"""
-
-
-
-    return render_template("bookdetails.html", bookdet=session["details"], hidebutton=hidebutton) 
+    
+        
+    return render_template("bookdetails.html", bookdet=session["details"], hidebutton=hidebutton, own_avg_rating=own_avg_rating) 
 
     
 
