@@ -29,7 +29,7 @@ Book Details
                 <td> {{ bookdet.title }} </td>
                 <td> {{ bookdet.author }} </td>
                 <td> {{ bookdet.year }} </td>
-                <td> {{ '%0.1f' % own_avg_rating|float }} #xyz <!-- implement no. of ratings here --> </td>
+                <td> {{ '%0.1f' % own_avg_rating|float }} of {{ numberofownrev }} ratings </td>
             </tr>
     </tbody>
 </table>
@@ -42,12 +42,23 @@ Book Details
 
 <!-- show reviews and ratings here -->
 <div>
-        <!--
+    {% if own_reviewsisbn|length %}
         
+        {% for review in own_reviewsisbn %}
+            <div>
+                {{review.rev_text}}
+            </div>    
+        {% endfor %}
+    {% else %}
+    <h1> No reviews found, be the first to write one! </h1>
+    {% endif %}
+        <!--
          use if else before, to checkif entries available
         <h3> No ratings/reviews for this book. Be the first to add one! </h3>
         -->
 </div>
+
+
 <div>
 
 </div>

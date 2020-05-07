@@ -20,6 +20,9 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import errordisplay, login_required
 
+# Importing the statistics module 
+import statistics 
+
 app = Flask(__name__)
 
 # Ensure templates are auto-reloaded
@@ -84,8 +87,7 @@ def register():
             db.execute("INSERT INTO users (username, useremail, pwdhash) VALUES  (:username, :useremail, :pwdhash)",     #pylint: disable=no-member
                         {"username": username, "useremail": useremail, "pwdhash": pwdhash})
             db.commit()     #pylint: disable=no-member
-            ### to be implemented: if successful, show congratulation msg, 
-            ### maybe via separate route "newlogin" which returns to normal login just adding a differen title
+            ### to be implemented: if successful, show congratulation msg, via flash message on next page (i.e. login page)
 
         else:                  
             return errordisplay("username already exists, please choose another username or login", 403)
@@ -193,23 +195,23 @@ def bookdetails(isbn):
     if db.execute("SELECT * FROM reviews WHERE isbn = :isbn AND username = :username", #pylint: disable=no-member
                         {"isbn": isbn, "username": session["username"]}).rowcount > 0:
         flash("You have already written a review for this book")
-        hidebutton=True
+        hidebutton = True
     else:
-        hidebutton=False
+        hidebutton = False
 
-    #### put calc of entries (=no of ratings) here and use with if. 
+    #### put calc of entries (=no of ratings) here and use with if.
+    own_reviewsisbn_ratings = db.execute("SELECT COUNT(rev_rating), AVG(rev_rating) FROM reviews WHERE isbn = :isbn", #pylint: disable=no-member
+                                    {"isbn": isbn}).fetchall()
+    numberofownrev = int(own_reviewsisbn_ratings[0][0])
+    own_avg_rating = float(own_reviewsisbn_ratings[0][1])
 
-    own_reviewsisbn=db.execute("SELECT * FROM reviews WHERE isbn = :isbn", #pylint: disable=no-member
+    own_reviewsisbn = db.execute("SELECT * FROM reviews WHERE isbn = :isbn", #pylint: disable=no-member
                                     {"isbn": isbn}).fetchall()
 
-    # calculate avg. rating for specific book
-    own_avg_rating = db.execute("SELECT AVG(rev_rating) FROM reviews WHERE isbn = :isbn", #pylint: disable=no-member
-                                    {"isbn": isbn}).fetchone()
 
     """show reviews (own + from API)"""
-    
-        
-    return render_template("bookdetails.html", bookdet=session["details"], hidebutton=hidebutton, own_avg_rating=own_avg_rating) 
+            
+    return render_template("bookdetails.html", bookdet=session["details"], hidebutton=hidebutton, numberofownrev=numberofownrev, own_avg_rating=own_avg_rating, own_reviewsisbn=own_reviewsisbn) 
 
     
 
