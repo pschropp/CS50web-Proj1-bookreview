@@ -1,6 +1,6 @@
 """ 
 set environment variables in terminal before flask run or use bash script SetEnvInTerminal on Mac Desktop:
-cd DEV/CS50-WebDev/Projects/project1
+cd Users/Pascal/DEV/CS50-WebDev/Projects/project1
 export FLASK_APP=application.py
 export FLASK_DEBUG=1
 export DATABASE_URL= see URI in DB and API Credentials.txt
@@ -21,9 +21,6 @@ from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import errordisplay, login_required
-
-# Importing the statistics module 
-import statistics 
 
 app = Flask(__name__)
 
