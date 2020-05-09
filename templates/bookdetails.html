@@ -31,25 +31,28 @@ Book Details
                 <td> 
                 {% if numberofownrev > 0 %}
                     <!-- plain version instead of stars: {{ '%0.1f' % own_avg_rating|float }} / 5.0 ({{ numberofownrev }} ratings) -->
-                    <!-- add checked stars according to rating -->
-                    <span class="fa fa-star checked"></span>
-                    {% if own_avg_rating > 1.5 %}
+                    <!-- add checked stars according to rating, 1 is the minimum -->
+                    <span class="fa fa-star checked"></span> 
+                    {% if own_avg_rating >= 1.5 %}
                             <span class="fa fa-star checked"></span>
                     {% endif %}
-                    {% if own_avg_rating > 2.5 %}
+                    {% if own_avg_rating >= 2.5 %}
                             <span class="fa fa-star checked"></span>
                     {% endif %}
-                    {% if own_avg_rating > 4.5 %}
+                    {% if own_avg_rating >= 3.5 %}
+                            <span class="fa fa-star checked"></span>
+                    {% endif %}
+                    {% if own_avg_rating >= 4.5 %}
                             <span class="fa fa-star checked"></span>
                     {% endif %}
                     <!-- fill up with empty stars according to rating -->
-                    {% if own_avg_rating > 4.5 %}
-                    {% elif own_avg_rating > 3.5 %}
+                    {% if own_avg_rating >= 4.5 %}
+                    {% elif own_avg_rating >= 3.5 %}
                         <span class="fa fa-star"></span>
-                    {% elif own_avg_rating > 2.5 %}
+                    {% elif own_avg_rating >= 2.5 %}
                         <span class="fa fa-star"></span>
                         <span class="fa fa-star"></span>
-                    {% elif own_avg_rating > 1.5 %}
+                    {% elif own_avg_rating >= 1.5 %}
                         <span class="fa fa-star"></span>
                         <span class="fa fa-star"></span>
                         <span class="fa fa-star"></span>
