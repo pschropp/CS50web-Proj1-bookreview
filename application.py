@@ -156,26 +156,34 @@ def searchresults():
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
 
-        session["results"] = [] #delete search results list of user
-        #store inputs in variables
+        #session["results"] = [] #delete search results list of user
+        searchresults = []
+        #store inputs in variables and create regular expression for the LIKE statement
+        #using iLIKE for case insensitivity in SQL-query. this ist postgreSQL specific. Otherwise title.lowercase().replace... and user LOWER(column) in query.
         isbn = request.form.get("isbn")
         like_isbn = "%" + isbn.replace("*", "") + "%"
         title = request.form.get("title")
+        like_title = "%" + title.replace("*", "") + "%"
         author = request.form.get("author")
-
-        # start query based on actually filled input fields
+        like_author = "%" + author.replace("*", "") + "%"
+        # start query based on actually filled input fields, hierarchy: if first found, rest will be skipped and so on
         if isbn:
-            session["results"] = db.execute("SELECT * FROM books WHERE isbn LIKE :isbn", #pylint: disable=no-member
+            searchresults = db.execute("SELECT * FROM books WHERE isbn LIKE :isbn", #pylint: disable=no-member
                                                     {"isbn":like_isbn}).fetchall()
-            return render_template("searchresults.html", booklist=session["results"])  
-
-
-            """ !!!code for other input fields here!!! """
-
-
-        # no inputs specified
+            return render_template("searchresults.html", booklist=searchresults)  
+        elif title:
+            searchresults = db.execute("SELECT * FROM books WHERE title iLIKE :title", #pylint: disable=no-member
+                                                    {"title":like_title}).fetchall()
+            return render_template("searchresults.html", booklist=searchresults)
+        elif author:
+            searchresults = db.execute("SELECT * FROM books WHERE author iLIKE :author", #pylint: disable=no-member
+                                                    {"author":like_author}).fetchall()
+            return render_template("searchresults.html", booklist=searchresults)
+            
+            # no inputs specified
         else:
             return errordisplay("must provide at least one search criterion", 403)
+
 
         # User reached route via GET (mainly via search link in navbar)
     else:
@@ -229,7 +237,7 @@ def composereview(isbn):
         if db.execute("SELECT * FROM reviews WHERE isbn = :isbn AND username = :username", #pylint: disable=no-member
                         {"isbn": isbn, "username": session["username"]}).rowcount == 0:
             #allow review, prepare label for input field and have composereview page rendered for input
-            book = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone()
+            book = db.execute("SELECT * FROM books WHERE isbn = :isbn", {"isbn": isbn}).fetchone() #pylint: disable=no-member
             return render_template("composereview.html", isbn=isbn, title=book.title, author=book.author, year=book.year)
 
         else: #i.e. if user has already written a review for that isbn
@@ -244,9 +252,9 @@ def composereview(isbn):
         if len(rev_text) == 0 or len(rev_text) > 9999:
             return errordisplay("Please enter a review text (1-9999 characters)", 403)
  
-        db.execute("INSERT INTO reviews (isbn, username, rev_rating, rev_text) VALUES (:isbn, :username, :rev_rating, :rev_text)", 
+        db.execute("INSERT INTO reviews (isbn, username, rev_rating, rev_text) VALUES (:isbn, :username, :rev_rating, :rev_text)", #pylint: disable=no-member
                         {"isbn": isbn, "username": session["username"], "rev_rating": rev_rating, "rev_text": rev_text})
-        db.commit()
+        db.commit() #pylint: disable=no-member
         # flash sucess message on next page (will be back to bookdetails) 
         flash("Your review has been submitted. Thank you!")
         return redirect(url_for("bookdetails", isbn=isbn))
