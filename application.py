@@ -5,6 +5,8 @@ export FLASK_APP=application.py
 export FLASK_DEBUG=1
 export DATABASE_URL= see URI in DB and API Credentials.txt
 flask run
+
+(flask run --host=0.0.0.0 with ip address of computer if serving to the network instead of only localhost 127.0.0.1)
 """
 
 import os
@@ -128,6 +130,7 @@ def login():
 
         # Remember which user has logged in
         session["username"] = rows[0]["username"]
+        app.logger.info('%s logged in successfully', session["username"])
 
         # Redirect user to home page
         return redirect("/")
@@ -155,8 +158,6 @@ def searchresults():
 
     # User reached route via POST (as by submitting a form via POST)
     if request.method == "POST":
-
-        #session["results"] = [] #delete search results list of user
         searchresults = []
         #store inputs in variables and create regular expression for the LIKE statement
         #using iLIKE for case insensitivity in SQL-query. this ist postgreSQL specific. Otherwise title.lowercase().replace... and user LOWER(column) in query.
@@ -184,8 +185,7 @@ def searchresults():
         else:
             return errordisplay("must provide at least one search criterion", 403)
 
-
-        # User reached route via GET (mainly via search link in navbar)
+     # User reached route via GET (mainly via search link in navbar)
     else:
         return redirect("/")
 
@@ -210,6 +210,7 @@ def bookdetails(isbn):
     own_reviewsisbn_ratings = db.execute("SELECT COUNT(rev_rating), AVG(rev_rating) FROM reviews WHERE isbn = :isbn", #pylint: disable=no-member
                                     {"isbn": isbn}).fetchall()
         #check, if there are ratings in db. If yes, convert db.execute output (string, string) to int/float. If no ratings (result: (0, None) ) --> else...
+    #app.logger.info('searchresult for ratings: %s', own_reviewsisbn_ratings)
     if own_reviewsisbn_ratings[0][0] != 0:
         numberofownrev = int(own_reviewsisbn_ratings[0][0])
         own_avg_rating = float(own_reviewsisbn_ratings[0][1])
