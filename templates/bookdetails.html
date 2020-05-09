@@ -5,9 +5,8 @@ Book Details
 {% endblock %}
 
 {% block main %}
-<!-- implement: add all reviews + avg. rating (+number of ratings) that users have left on my page
+<!-- implement: add all reviews that users have left on my page
                     5) also show on that page the f) avg. rating and the g) number of ratings  on Goodreads via their API
-                    + Button (link, get) to write an own review 
 -->
 
 <h1>Reviews for: </h1>
@@ -20,7 +19,7 @@ Book Details
             <th>Title</th>
             <th>Author</th>
             <th>Published</th>
-            <th>Avg. Rating here (max. 5.0) </th>
+            <th>Avg. Rating here </th>
         </tr>
     </thead>
     <tbody>
@@ -29,7 +28,42 @@ Book Details
                 <td> {{ bookdet.title }} </td>
                 <td> {{ bookdet.author }} </td>
                 <td> {{ bookdet.year }} </td>
-                <td> {{ '%0.1f' % own_avg_rating|float }} of {{ numberofownrev }} ratings </td>
+                <td> 
+                {% if numberofownrev > 0 %}
+                    <!-- plain version instead of stars: {{ '%0.1f' % own_avg_rating|float }} / 5.0 ({{ numberofownrev }} ratings) -->
+                    <!-- add checked stars according to rating -->
+                    <span class="fa fa-star checked"></span>
+                    {% if own_avg_rating > 1.5 %}
+                            <span class="fa fa-star checked"></span>
+                    {% endif %}
+                    {% if own_avg_rating > 2.5 %}
+                            <span class="fa fa-star checked"></span>
+                    {% endif %}
+                    {% if own_avg_rating > 4.5 %}
+                            <span class="fa fa-star checked"></span>
+                    {% endif %}
+                    <!-- fill up with empty stars according to rating -->
+                    {% if own_avg_rating > 4.5 %}
+                    {% elif own_avg_rating > 3.5 %}
+                        <span class="fa fa-star"></span>
+                    {% elif own_avg_rating > 2.5 %}
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                    {% elif own_avg_rating > 1.5 %}
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                    {% else %}
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star"></span>
+                        <span class="fa fa-star "></span>
+                    {% endif %}
+                    in {{ numberofownrev }} ratings
+                {% else %}
+                    no ratings
+                {% endif %}
+                </td>
             </tr>
     </tbody>
 </table>
@@ -50,12 +84,8 @@ Book Details
             </div>    
         {% endfor %}
     {% else %}
-    <h1> No reviews found, be the first to write one! </h1>
+    <h3> No reviews found, be the first to write one! </h3>
     {% endif %}
-        <!--
-         use if else before, to checkif entries available
-        <h3> No ratings/reviews for this book. Be the first to add one! </h3>
-        -->
 </div>
 
 

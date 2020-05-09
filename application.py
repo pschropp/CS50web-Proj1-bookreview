@@ -86,15 +86,15 @@ def register():
             # make new entry in db for new user
             db.execute("INSERT INTO users (username, useremail, pwdhash) VALUES  (:username, :useremail, :pwdhash)",     #pylint: disable=no-member
                         {"username": username, "useremail": useremail, "pwdhash": pwdhash})
-            db.commit()     #pylint: disable=no-member
-            ### to be implemented: if successful, show congratulation msg, via flash message on next page (i.e. login page)
-
+            db.commit()     #pylint: disable=no-member           
         else:                  
             return errordisplay("username already exists, please choose another username or login", 403)
 
-        # Redirect user to login page
-        return redirect("/login")
-        
+        # Log in user directly after registration and redirect to home page
+        session["username"] = username
+        return redirect("/")
+        # alternatively instead of logging in directly: Redirect user to login page: return redirect("/login")
+
         # User reached route via GET (as by clicking a link or via redirect)
     else:
         return render_template("register.html")
@@ -199,15 +199,18 @@ def bookdetails(isbn):
     else:
         hidebutton = False
 
-    #### put calc of entries (=no of ratings) here and use with if.
     own_reviewsisbn_ratings = db.execute("SELECT COUNT(rev_rating), AVG(rev_rating) FROM reviews WHERE isbn = :isbn", #pylint: disable=no-member
                                     {"isbn": isbn}).fetchall()
-    numberofownrev = int(own_reviewsisbn_ratings[0][0])
-    own_avg_rating = float(own_reviewsisbn_ratings[0][1])
-
-    own_reviewsisbn = db.execute("SELECT * FROM reviews WHERE isbn = :isbn", #pylint: disable=no-member
-                                    {"isbn": isbn}).fetchall()
-
+        #check, if there are ratings in db. If yes, convert db.execute output (string, string) to int/float. If no ratings (result: (0, None) ) --> else...
+    if own_reviewsisbn_ratings[0][0] != 0:
+        numberofownrev = int(own_reviewsisbn_ratings[0][0])
+        own_avg_rating = float(own_reviewsisbn_ratings[0][1])
+        
+        #get reviews from database
+        own_reviewsisbn = db.execute("SELECT * FROM reviews WHERE isbn = :isbn", #pylint: disable=no-member
+                                        {"isbn": isbn}).fetchall()
+    else: # i.e. if there are no reviews for that book, set individ variables to accordant values that can be used by Jinja
+        numberofownrev, own_avg_rating, own_reviewsisbn = 0, 0, []
 
     """show reviews (own + from API)"""
             
