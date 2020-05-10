@@ -192,8 +192,8 @@ def searchresults():
 @login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
 def bookdetails(isbn):
     """generate and render search results for book search"""
-    session["details"] = []
-    session["details"] = db.execute("SELECT * FROM books WHERE isbn = :isbn", #pylint: disable=no-member
+    details = []
+    details = db.execute("SELECT * FROM books WHERE isbn = :isbn", #pylint: disable=no-member
                                         {"isbn":isbn}).fetchone()
 
         #hide compose review button on bookdetails.html, if user has already posted a review
@@ -220,7 +220,7 @@ def bookdetails(isbn):
 
     """show reviews (own + from API)"""
             
-    return render_template("bookdetails.html", bookdet=session["details"], hidebutton=hidebutton, numberofownrev=numberofownrev, own_avg_rating=own_avg_rating, own_reviewsisbn=own_reviewsisbn) 
+    return render_template("bookdetails.html", bookdet=details, hidebutton=hidebutton, numberofownrev=numberofownrev, own_avg_rating=own_avg_rating, own_reviewsisbn=own_reviewsisbn) 
 
     
 
