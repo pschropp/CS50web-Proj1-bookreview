@@ -22,6 +22,8 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import errordisplay, login_required
 
+import json
+
 app = Flask(__name__)
 
 # Ensure templates are auto-reloaded
@@ -85,7 +87,8 @@ def register():
             # make new entry in db for new user
             db.execute("INSERT INTO users (username, useremail, pwdhash) VALUES  (:username, :useremail, :pwdhash)",     #pylint: disable=no-member
                         {"username": username, "useremail": useremail, "pwdhash": pwdhash})
-            db.commit()     #pylint: disable=no-member           
+            db.commit()     #pylint: disable=no-member
+            flash("Your account has been created. Enjoy!")           
         else:                  
             return errordisplay("username already exists, please choose another username or login", 403)
 
@@ -112,7 +115,6 @@ def login():
         # Ensure username was submitted
         if not request.form.get("username"):
             return errordisplay("must provide username", 403)
-
         # Ensure password was submitted
         elif not request.form.get("password"):
             return errordisplay("must provide password", 403)
@@ -127,7 +129,7 @@ def login():
 
         # Remember which user has logged in
         session["username"] = rows[0]["username"]
-        app.logger.info('%s logged in successfully', session["username"])
+        app.logger.info('%s logged in successfully', session["username"]) #pylint: disable=no-member
 
         # Redirect user to home page
         return redirect("/")
@@ -143,7 +145,6 @@ def logout():
 
     # Forget any user_id
     session.clear()
-
     # Redirect user to login form
     return redirect("/")
 
@@ -218,9 +219,18 @@ def bookdetails(isbn):
     else: # i.e. if there are no reviews for that book, set individ variables to accordant values that can be used by Jinja
         numberofownrev, own_avg_rating, own_reviewsisbn = 0, 0, []
 
+
     """show reviews (own + from API)"""
-            
-    return render_template("bookdetails.html", bookdet=details, hidebutton=hidebutton, numberofownrev=numberofownrev, own_avg_rating=own_avg_rating, own_reviewsisbn=own_reviewsisbn) 
+    try:
+        res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": GR_API_Key, "isbns": isbn}).json()
+        app.logger.info('answer from GoodReads-API: %s', res) #pylint: disable=no-member
+        GR_ratings_count = res["books"][0]["work_ratings_count"]
+        GR_ratings_avg = res["books"][0]["average_rating"]
+        app.logger.info('avg from GoodReads-API: %s in %s ratings' % (GR_ratings_avg, GR_ratings_count)) #pylint: disable=no-member
+    except:
+        app.logger.error('problem with answer from GoodReads-API') #pylint: disable=no-member
+        
+    return render_template("bookdetails.html", bookdet=details, hidebutton=hidebutton, numberofownrev=numberofownrev, own_avg_rating=own_avg_rating, own_reviewsisbn=own_reviewsisbn, GR_ratings_avg=GR_ratings_avg, GR_ratings_count=GR_ratings_count) 
 
     
 

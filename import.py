@@ -14,14 +14,13 @@ def main():
 
     #loop to read line from file and insert into db
     for isbn, title, author, year in reader:
-        db.execute("INSERT INTO books (isbn, title, author, year) VALUES (:isbn, :title, :author, :year)",
+        db.execute("INSERT INTO books (isbn, title, author, year) VALUES (:isbn, :title, :author, :year)", #pylint: disable=no-member
                     {"isbn": isbn, "title": title, "author": author, "year": year})   
-    db.commit()
+    db.commit() #pylint: disable=no-member
     print("Added books to database.")
 
 
-"""
-DB schema should be:
+"""DB schema:
     users:
         username
         useremail

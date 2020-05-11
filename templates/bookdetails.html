@@ -32,7 +32,7 @@ Book Details
                 {% if numberofownrev > 0 %}
                     <!-- plain version instead of stars: {{ '%0.1f' % own_avg_rating|float }} / 5.0 ({{ numberofownrev }} ratings) -->
                     <!-- add checked stars according to rating, 1 is the minimum -->
-                    <span class="fa fa-star checked"></span> 
+                    {{ '%0.1f' % own_avg_rating|float }} <span class="fa fa-star checked"></span> 
                     {% if own_avg_rating >= 1.5 %}
                             <span class="fa fa-star checked"></span>
                     {% endif %}
@@ -71,23 +71,32 @@ Book Details
     </tbody>
 </table>
 
+
+<div>
+    {% if GR_ratings_count|int > 0 %}
+        <h4> Rating on Goodreads: {{ '%0.1f' % GR_ratings_avg|float }}/5.0 in {{ GR_ratings_count|int }} ratings </h4>
+    {% else %}
+        <h4> No ratings on Goodreads available for this book </h4>
+    {% endif %}
+</div>
+
+
 <!-- link as a button (using bootstrap class) to composereview as GET, inlcuding isbn -->
 {% if hidebutton is sameas false %}
     <a class="btn btn-primary" type="button" href="{{ url_for('composereview', isbn=bookdet.isbn) }}">Compose Review</a>
 {% endif %}
 
 
-<!-- show reviews and ratings here -->
+<!-- show own reviews here -->
 <div>
     {% if own_reviewsisbn|length %}
-        
         {% for review in own_reviewsisbn %}
             <div>
                 {{review.rev_text}}
             </div>    
         {% endfor %}
     {% else %}
-    <h3> No reviews found, be the first to write one! </h3>
+        <h3> No reviews found, be the first to write one! </h3>
     {% endif %}
 </div>
 
