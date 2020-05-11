@@ -219,8 +219,7 @@ def bookdetails(isbn):
     else: # i.e. if there are no reviews for that book, set individ variables to accordant values that can be used by Jinja
         numberofownrev, own_avg_rating, own_reviewsisbn = 0, 0, []
 
-
-    """show reviews (own + from API)"""
+    #get avg ratings and number of ratings from Goodreads-API and pass to bookdetails.html
     try:
         res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": GR_API_Key, "isbns": isbn}).json()
         app.logger.info('answer from GoodReads-API: %s', res) #pylint: disable=no-member
@@ -233,7 +232,6 @@ def bookdetails(isbn):
     return render_template("bookdetails.html", bookdet=details, hidebutton=hidebutton, numberofownrev=numberofownrev, own_avg_rating=own_avg_rating, own_reviewsisbn=own_reviewsisbn, GR_ratings_avg=GR_ratings_avg, GR_ratings_count=GR_ratings_count) 
 
     
-
 
 @app.route("/composereview/<string:isbn>", methods=["GET", "POST"]) # build route with variable for isbn, isbn passed from bookdetails-link
 @login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
@@ -267,6 +265,39 @@ def composereview(isbn):
         flash("Your review has been submitted. Thank you!")
         return redirect(url_for("bookdetails", isbn=isbn))
         
+@app.route("/api/<string:isbn>", methods=["GET", "POST"]) # build route with variable for isbn; isbn is entered in Browser URL or via API-Req.
+def api(isbn):
+    """API to return bookdetails when isbn is passed"""
+
+    if request.method == "POST":
+        return errordisplay("Method Not Allowed: POST requests not allowed for this API-call", 405)
+
+    if request.method == "GET":
+        try:
+            api_details = []
+            api_details = db.execute("SELECT * FROM books WHERE isbn = :isbn", #pylint: disable=no-member
+                                                {"isbn":isbn}).fetchone()
+            
+
+            
+            """assign column outputs to variables to pass to API"""
+            #app.logger.info('db results for isbn: %s', own_reviewsisbn_ratings)
+
+
+            own_reviewsisbn_ratings = db.execute("SELECT COUNT(rev_rating), AVG(rev_rating) FROM reviews WHERE isbn = :isbn", #pylint: disable=no-member
+                                            {"isbn": isbn}).fetchall()
+                #check, if there are ratings in db. If yes, convert db.execute output (string, string) to int/float. If no ratings (result: (0, None) ) --> else...
+            if own_reviewsisbn_ratings[0][0] != 0:
+                numberofownrev = int(own_reviewsisbn_ratings[0][0])
+                own_avg_rating = float(own_reviewsisbn_ratings[0][1])
+            else: # i.e. if there are no reviews for that book, set individ variables to accordant values that can be used by Jinja
+                numberofownrev, own_avg_rating = 0, 0
+
+
+            return "return to be implemented"
+
+        except:
+            return errordisplay("ISBN not in our database", 404)
 
 
 
