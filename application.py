@@ -264,7 +264,8 @@ def composereview(isbn):
         # flash sucess message on next page (will be back to bookdetails) 
         flash("Your review has been submitted. Thank you!")
         return redirect(url_for("bookdetails", isbn=isbn))
-        
+
+
 @app.route("/api/<string:isbn>", methods=["GET", "POST"]) # build route with variable for isbn; isbn is entered in Browser URL or via API-Req.
 def api(isbn):
     """API to return bookdetails when isbn is passed"""
@@ -277,27 +278,35 @@ def api(isbn):
             api_details = []
             api_details = db.execute("SELECT * FROM books WHERE isbn = :isbn", #pylint: disable=no-member
                                                 {"isbn":isbn}).fetchone()
-            
-
-            
-            """assign column outputs to variables to pass to API"""
+            #assign results of bookresult query to variables
             #app.logger.info('db results for isbn: %s', own_reviewsisbn_ratings)
-
-
+            api_title = api_details[1]
+            api_author = api_details[2]
+            api_year = api_details[3]
+            #assign results of ratings query to variables
             own_reviewsisbn_ratings = db.execute("SELECT COUNT(rev_rating), AVG(rev_rating) FROM reviews WHERE isbn = :isbn", #pylint: disable=no-member
                                             {"isbn": isbn}).fetchall()
                 #check, if there are ratings in db. If yes, convert db.execute output (string, string) to int/float. If no ratings (result: (0, None) ) --> else...
             if own_reviewsisbn_ratings[0][0] != 0:
-                numberofownrev = int(own_reviewsisbn_ratings[0][0])
-                own_avg_rating = float(own_reviewsisbn_ratings[0][1])
+                api_ratings_count = int(own_reviewsisbn_ratings[0][0])
+                api_ratings_avg = float(own_reviewsisbn_ratings[0][1])
             else: # i.e. if there are no reviews for that book, set individ variables to accordant values that can be used by Jinja
-                numberofownrev, own_avg_rating = 0, 0
+                api_ratings_avg = 0
 
-
-            return "return to be implemented"
+            "return to be implemented"
+            json_res = {
+                "isbn" : isbn,
+                "title": api_title,
+                "author": api_author,
+                "year": api_year,
+                "review_count": api_ratings_count,
+                "average_score": api_ratings_avg
+            }
+            json_res = json.dumps(json_res)
+            return json_res
 
         except:
-            return errordisplay("ISBN not in our database", 404)
+            return json.dumps({"error_msg": "ISBN not in our database", "error_code": 404}), 404
 
 
 
