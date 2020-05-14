@@ -5,11 +5,9 @@ Book Details
 {% endblock %}
 
 {% block main %}
-<!-- implement: add all reviews that users have left on my page
-                    5) also show on that page the f) avg. rating and the g) number of ratings  on Goodreads via their API
+<!-- show all reviews that users have left on my page + show 
+     f) avg. rating and the g) number of ratings  on Goodreads via their API
 -->
-
-<h1>Reviews for: </h1>
 
 <!-- Table to display chosen book -->
 <table class="table">
@@ -88,21 +86,23 @@ Book Details
 
 
 <!-- show own reviews here -->
-<div>
+<div class="container m-5">
+    <h2 class="text-left">User reviews</h2>
     {% if own_reviewsisbn|length %}
         {% for review in own_reviewsisbn %}
-            <div class="w-75 p-3" style="background-color: rgb(141, 160, 245);">
-                {{review.rev_text}}
-            </div>    
+            <div class="col-9 p-1 mb-3 align-self-center" style="background-color: rgb(190, 200, 243);">
+                <div class="row"> 
+                    <div class="col-3 p-1 ml-1" style="background-color: rgb(255, 255, 255);">
+                        <div clas="row">{{review.username}}</div>
+                        <div clas="row">rated at: {{review.rev_rating}}</div>
+                    </div>
+                    <div class="col text-left">{{review.rev_text}}</div> 
+                </div>               
+            </div> 
         {% endfor %}
     {% else %}
         <h3> No reviews found, be the first to write one! </h3>
     {% endif %}
-</div>
-
-
-<div>
-
 </div>
 
 {% endblock %}
