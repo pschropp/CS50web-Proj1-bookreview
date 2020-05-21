@@ -43,7 +43,7 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-# Set API-Key for Goodreads
+# Set API-Key for Goodreads, got from Goodreads after registration for API access
 GR_API_Key = "***REMOVED***"
 
 @app.route("/") 
@@ -293,7 +293,6 @@ def api(isbn):
             else: # i.e. if there are no reviews for that book, set individ variables to accordant values that can be used by Jinja
                 api_ratings_avg = 0
 
-            "return to be implemented"
             json_res = {
                 "isbn" : isbn,
                 "title": api_title,
@@ -302,11 +301,12 @@ def api(isbn):
                 "review_count": api_ratings_count,
                 "average_score": api_ratings_avg
             }
-            json_res = json.dumps(json_res)
-            return json_res
+            #return json.dumps(json_res), works but better with jsonify, firefox does work better with that header
+            return jsonify(json_res)
 
         except:
-            return json.dumps({"error_msg": "ISBN not in our database", "error_code": 404}), 404
+            #return json.dumps({"error_msg": "ISBN not in our database", "error_code": 404}), 404   , works but better with jsonify, firefox does work better with that header
+            return jsonify({"error_msg": "ISBN not in our database", "error_code": 404}), 404
 
 
 
