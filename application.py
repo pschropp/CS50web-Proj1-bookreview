@@ -1,4 +1,4 @@
-""" 
+""" heroku: cs50web-pro1-orm
 set environment variables in terminal before flask run or use bash script SetEnvInTerminal on Mac Desktop:
 cd Users/Pascal/DEV/CS50-WebDev/Projects/project1
 export FLASK_APP=application.py
