@@ -6,6 +6,8 @@ export FLASK_DEBUG=1
 export DATABASE_URL= see URI in DB and API Credentials.txt
 flask run
 
+or: do pip install python-dotenv in project folder and create .flaskenv file in project folder (which contains env-variables) for env variables to be set automatically
+
 (flask run --host=0.0.0.0 with ip address of computer if serving to the network instead of only localhost 127.0.0.1)
 """
 

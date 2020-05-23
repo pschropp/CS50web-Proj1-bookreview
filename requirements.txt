@@ -5,3 +5,4 @@ SQLAlchemy
 tempfile
 werkzeug
 json
+python-dotenv
