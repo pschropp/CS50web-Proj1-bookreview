@@ -24,7 +24,7 @@ class Config(object):
 heroku: cs50web-pro1-orm
 set environment variables in terminal before flask run or use bash script SetEnvInTerminal on Mac Desktop:
 cd Users/Pascal/DEV/CS50-WebDev/Projects/proj1_ORM
-export FLASK_APP=application.py
+export FLASK_APP=bookapp.py
 export FLASK_DEBUG=1
 export DATABASE_URL= see URI in DB and API Credentials.txt
 flask run

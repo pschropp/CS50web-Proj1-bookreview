@@ -1,50 +1,22 @@
-""" 
-(flask run --host=0.0.0.0 with ip address of computer if serving to the network instead of only localhost 127.0.0.1)
-
-login mit orm:
-    Flask-User
-    https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
-    https://flask-user.readthedocs.io/en/latest/basic_app.html
-    oder
-    Flask-Login
-    https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-v-user-logins
-"""
+from app import app
 
 import os
 import requests
 
 from flask import Flask, session, flash, jsonify, redirect, render_template, request, url_for
 from flask_session import Session
-#from sqlalchemy import create_engine
-#from sqlalchemy.orm import scoped_session, sessionmaker
-from config import Config
-from models import * #own model file with classes for ORM
 
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
-from helpers import errordisplay, login_required
 from flask_login import LoginManager
 
 import json
 
-app = Flask(__name__)
+from app.forms import LoginForm
+from app.helpers import errordisplay, login_required
 
-#importing configurations from config.py
-app.config.from_object(Config)
-
-#create and initiate Login-Manager for Flask-Login
-#login = LoginManager(app)
-
-# Set up database, according to imported configurations
-db.init_app(app)
-# Check for environment variable db url
-if not os.getenv("DATABASE_URL"):
-    raise RuntimeError("DATABASE_URL is not set")
-
-# Configure session to use filesystem, according to imported configurations
-Session(app)
-
-@app.route("/") 
+@app.route("/")
+@app.route("/index") 
 @login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
 def index():
     #this renders the searchforms, if user is logged in
@@ -103,32 +75,12 @@ def register():
 def login():
     """Log user in"""
 
-    # Forget any user_id
-    session.clear()
-
-    # User reached route via POST (as by submitting a form via POST)
-    if request.method == "POST":
-
-        # Ensure username was submitted
-        if not request.form.get("username"):
-            return errordisplay("must provide username", 403)
-        # Ensure password was submitted
-        elif not request.form.get("password"):
-            return errordisplay("must provide password", 403)
-
-        # Query database for username
-        if User.query.filter_by(username="username").count() != 1 or not check_password_hash(User.query.filter_by(username="username").first().pwdhash, request.form.get("password")):
-            return errordisplay("invalid username and/or password", 403)
-        else:
-            # Remember which user has logged in
-            session["username"] = ["username"]
-            app.logger.info('%s logged in successfully', session["username"])
-            # Redirect user to home page
-            return redirect("/")
-
-    # User reached route via GET (as by clicking a link or via redirect)
-    else:
-        return render_template("login.html")
+    form = LoginForm()
+    if form.validate_on_submit():
+        flash('Login requested for user {}, remember_me={}'.format(
+            form.username.data, form.remember_me.data))
+        return redirect('/index')
+    return render_template('login.html', title='Sign In', form=form)
 
 
 @app.route("/logout")
@@ -299,6 +251,7 @@ def api(isbn):
         except:
             #return json.dumps({"error_msg": "ISBN not in our database", "error_code": 404}), 404   , works but better with jsonify, firefox does work better with that header
             return jsonify({"error_msg": "ISBN not in our database", "error_code": 404}), 404
+
 
 
 
