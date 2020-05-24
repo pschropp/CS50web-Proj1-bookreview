@@ -82,6 +82,8 @@ def login():
         return redirect('/index')
     return render_template('login.html', title='Sign In', form=form)
 
+"""weitermachen: https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iii-web-forms, ab Improving Field Validation"""
+
 
 @app.route("/logout")
 def logout():

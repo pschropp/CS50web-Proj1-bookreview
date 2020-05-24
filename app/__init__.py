@@ -6,7 +6,7 @@ from flask_session import Session
 #from sqlalchemy import create_engine
 #from sqlalchemy.orm import scoped_session, sessionmaker
 from config import Config
-from models import * #own model file with classes for ORM
+from app.models import * #own model file with classes for ORM
 
 app = Flask(__name__)
 
