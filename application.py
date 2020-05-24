@@ -1,12 +1,13 @@
-""" heroku: cs50web-pro1-orm
-set environment variables in terminal before flask run or use bash script SetEnvInTerminal on Mac Desktop:
-cd Users/Pascal/DEV/CS50-WebDev/Projects/project1
-export FLASK_APP=application.py
-export FLASK_DEBUG=1
-export DATABASE_URL= see URI in DB and API Credentials.txt
-flask run
-
+""" 
 (flask run --host=0.0.0.0 with ip address of computer if serving to the network instead of only localhost 127.0.0.1)
+
+login mit orm:
+    Flask-User
+    https://www.digitalocean.com/community/tutorials/how-to-add-authentication-to-your-app-with-flask-login
+    https://flask-user.readthedocs.io/en/latest/basic_app.html
+    oder
+    Flask-Login
+    https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-v-user-logins
 """
 
 import os
@@ -14,37 +15,34 @@ import requests
 
 from flask import Flask, session, flash, jsonify, redirect, render_template, request, url_for
 from flask_session import Session
-from sqlalchemy import create_engine
-from sqlalchemy.orm import scoped_session, sessionmaker
+#from sqlalchemy import create_engine
+#from sqlalchemy.orm import scoped_session, sessionmaker
+from config import Config
+from models import * #own model file with classes for ORM
 
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
-from werkzeug.security import check_password_hash, generate_password_hash
 from helpers import errordisplay, login_required
+from flask_login import LoginManager
 
 import json
 
 app = Flask(__name__)
 
-# Ensure templates are auto-reloaded
-app.config["TEMPLATES_AUTO_RELOAD"] = True
+#importing configurations from config.py
+app.config.from_object(Config)
 
-# Check for environment variable
+#create and initiate Login-Manager for Flask-Login
+#login = LoginManager(app)
+
+# Set up database, according to imported configurations
+db.init_app(app)
+# Check for environment variable db url
 if not os.getenv("DATABASE_URL"):
     raise RuntimeError("DATABASE_URL is not set")
 
-# Configure session to use filesystem
-app.config["SESSION_FILE_DIR"] = mkdtemp()
-app.config["SESSION_PERMANENT"] = False
-app.config["SESSION_TYPE"] = "filesystem"
+# Configure session to use filesystem, according to imported configurations
 Session(app)
-
-# Set up database
-engine = create_engine(os.getenv("DATABASE_URL"))
-db = scoped_session(sessionmaker(bind=engine))
-
-# Set API-Key for Goodreads, got from Goodreads after registration for API access
-GR_API_Key = "***REMOVED***"
 
 @app.route("/") 
 @login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
@@ -77,17 +75,16 @@ def register():
         elif not password:
             return errordisplay("must provide password", 403)
 
-        # Query database for username and check, if username exists already    
-        rows = db.execute("SELECT * FROM users WHERE username = :username",         #pylint: disable=no-member
-                    {"username": username}).rowcount
-        if rows == 0: 
+        # Query database for username and check, if username exists already  
+        # 
+        user = User.query.get(username)
+        if not user:
             #hash password
             pwdhash = generate_password_hash(password, "sha256")
 
             # make new entry in db for new user
-            db.execute("INSERT INTO users (username, useremail, pwdhash) VALUES  (:username, :useremail, :pwdhash)",     #pylint: disable=no-member
-                        {"username": username, "useremail": useremail, "pwdhash": pwdhash})
-            db.commit()     #pylint: disable=no-member
+            user = User(username, useremail, pwdhash)
+            db.session.add(user)
             flash("Your account has been created. Enjoy!")           
         else:                  
             return errordisplay("username already exists, please choose another username or login", 403)
@@ -120,19 +117,14 @@ def login():
             return errordisplay("must provide password", 403)
 
         # Query database for username
-        rows = db.execute("SELECT * FROM users WHERE username = :username", #pylint: disable=no-member
-                          {"username":request.form.get("username")}).fetchall()
-        
-        # Ensure username exists and password is correct; check_password_hash is imported from werkzeug
-        if len(rows) != 1 or not check_password_hash(rows[0]["pwdhash"], request.form.get("password")):
+        if User.query.filter_by(username="username").count() != 1 or not check_password_hash(User.query.filter_by(username="username").first().pwdhash, request.form.get("password")):
             return errordisplay("invalid username and/or password", 403)
-
-        # Remember which user has logged in
-        session["username"] = rows[0]["username"]
-        app.logger.info('%s logged in successfully', session["username"]) #pylint: disable=no-member
-
-        # Redirect user to home page
-        return redirect("/")
+        else:
+            # Remember which user has logged in
+            session["username"] = ["username"]
+            app.logger.info('%s logged in successfully', session["username"])
+            # Redirect user to home page
+            return redirect("/")
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:

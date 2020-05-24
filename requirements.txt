@@ -2,6 +2,9 @@ Flask
 Flask-Session
 psycopg2-binary
 SQLAlchemy
+flask_sqlalchemy
 tempfile
 werkzeug
 json
+python-dotenv
+flask-wtf
