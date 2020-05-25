@@ -63,7 +63,7 @@ def register():
 
         # Log in user directly after registration and redirect to home page
         session["username"] = username
-        return redirect("/")
+        return redirect(url_for("index"))
         # alternatively instead of logging in directly: Redirect user to login page: return redirect("/login")
 
         # User reached route via GET (as by clicking a link or via redirect)
@@ -79,10 +79,8 @@ def login():
     if form.validate_on_submit():
         flash('Login requested for user {}, remember_me={}'.format(
             form.username.data, form.remember_me.data))
-        return redirect('/index')
+        return redirect(url_for('index'))
     return render_template('login.html', title='Sign In', form=form)
-
-"""weitermachen: https://blog.miguelgrinberg.com/post/the-flask-mega-tutorial-part-iii-web-forms, ab Improving Field Validation"""
 
 
 @app.route("/logout")
@@ -92,7 +90,7 @@ def logout():
     # Forget any user_id
     session.clear()
     # Redirect user to login form
-    return redirect("/")
+    return redirect(url_for("index"))
 
 
 @app.route("/searchresults", methods=["GET", "POST"])
@@ -131,7 +129,7 @@ def searchresults():
 
      # User reached route via GET (mainly via search link in navbar)
     else:
-        return redirect("/")
+        return redirect(url_for("index"))
 
 
 

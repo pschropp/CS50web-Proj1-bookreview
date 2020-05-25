@@ -1,7 +1,0 @@
-#!/bin/bash
-
-cd DEV/CS50-WebDev/Projects/proj1_ORM
-export FLASK_APP=bookapp.py
-export FLASK_DEBUG=1
-export postgres://***REMOVED***:***REMOVED***@***REMOVED***:***REMOVED***/***REMOVED***
-bash;

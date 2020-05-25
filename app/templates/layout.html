@@ -13,7 +13,8 @@
         <!-- favicon for tab title -->
         <link href="/static/bookicon.ico" rel="icon">
 
-        <link href="/static/styles.css" rel="stylesheet">
+        <!-- stylesheet -->
+        <link href="/static/styles.css" rel="stylesheet"> 
 
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
@@ -41,18 +42,18 @@
             <div class="collapse navbar-collapse" id="navbar">
                 {% if session.username %}
                     <ul class="navbar-nav mr-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/">Search</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('index') }}">Search</a></li>
                         <!-- <li class="nav-item"><a class="nav-link" href="/buy">dummy</a></li> -->
                         <!-- <li class="nav-item"><a class="nav-link" href="/sell">dummy</a></li> -->
                         <!-- <li class="nav-item"><a class="nav-link" href="/history">dummy</a></li> -->
                     </ul>
                     <ul class="navbar-nav ml-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Log Out</a></li>
                     </ul>
                 {% else %}
                     <ul class="navbar-nav ml-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}">Register</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Log In</a></li>
                     </ul>
                 {% endif %}
             </div>

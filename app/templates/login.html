@@ -11,10 +11,16 @@
         <p>
             <!-- {{ form.username.label }}<br> -->
             {{ form.username(class="form-control", autofocus="on", autocomplete="off", placeholder="Username", type="text") }}
+            {% for error in form.username.errors %}
+            <span style="color: red; width:50px; display: inline-block;">[{{ error }}]</span>
+            {% endfor %}
         </p>
         <p>
             <!-- {{ form.password.label }}<br> -->
-            {{ form.password(class="form-control", autofocus="on", autocomplete="off", placeholder="E-Mail Address", type="text") }}
+            {{ form.password(class="form-control", autofocus="off", autocomplete="off", placeholder="E-Mail Address", type="text") }}
+            {% for error in form.password.errors %}
+            <span style="color: red; width:50px; display: inline-block;">[{{ error }}]</span>
+            {% endfor %}
         </p>
         <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
         <p>{{ form.submit(class="btn btn-primary") }}</p>
