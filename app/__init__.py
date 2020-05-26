@@ -5,6 +5,7 @@ from flask import Flask, session, request
 from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import LoginManager
 #from sqlalchemy import create_engine
 #from sqlalchemy.orm import scoped_session, sessionmaker
 from config import Config
@@ -15,7 +16,7 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 #create and initiate Login-Manager for Flask-Login
-#login = LoginManager(app)
+login = LoginManager(app)
 
 # Check for environment variable db uri
 if not os.getenv("DATABASE_URL"):
