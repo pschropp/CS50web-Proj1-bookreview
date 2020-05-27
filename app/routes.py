@@ -8,16 +8,17 @@ from flask_session import Session
 
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
-from flask_login import LoginManager
+from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 
 import json
 
+from app.models import User
 from app.forms import LoginForm
-from app.helpers import errordisplay, login_required
+from app.helpers import errordisplay
 
 @app.route("/")
 @app.route("/index") 
-@login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
+@login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined by flask-login, set-up in __init__.py
 def index():
     #this renders the searchforms, if user is logged in
     return render_template("index.html")
@@ -70,27 +71,33 @@ def register():
     else:
         return render_template("register.html")
 
-
-@app.route("/login", methods=["GET", "POST"])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     """Log user in"""
 
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
     form = LoginForm()
     if form.validate_on_submit():
-        flash('Login requested for user {}, remember_me={}'.format(
-            form.username.data, form.remember_me.data))
-        return redirect(url_for('index'))
-    return render_template('login.html', title='Sign In', form=form)
+        user = User.query.filter_by(username=form.username.data).first()
+        if user is None or not user.check_password(form.password.data):
+            flash('Invalid username or password')
+            return redirect(url_for('login'))
+        login_user(user, remember=form.remember_me.data)
+        next_page = request.args.get('next')
+        if not next_page or url_parse(next_page).netloc != '':
+            next_page = url_for('index')
+        return redirect(next_page)
+    return render_template('login.html', form=form)
 
 
 @app.route("/logout")
 def logout():
     """Log user out"""
 
-    # Forget any user_id
-    session.clear()
+    logout_user()
     # Redirect user to login form
-    return redirect(url_for("index"))
+    return redirect(url_for('index'))
 
 
 @app.route("/searchresults", methods=["GET", "POST"])

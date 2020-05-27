@@ -17,6 +17,7 @@ app.config.from_object(Config)
 
 #create and initiate Login-Manager for Flask-Login
 login = LoginManager(app)
+login.login_view = 'login'
 
 # Check for environment variable db uri
 if not os.getenv("DATABASE_URL"):
