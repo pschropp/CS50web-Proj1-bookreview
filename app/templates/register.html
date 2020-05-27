@@ -9,16 +9,32 @@
 {% endblock %}
 
 {% block main %}
-    <form action="/register" method="post">
+    <form action="" method="post">
+        {{ form.hidden_tag() }}
         <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
+            {{ form.username(class="form-control", autofocus="on", autocomplete="off", placeholder="Username", type="text") }}
+            {% for error in form.username.errors %}
+            <span style="color: red; width:50px; display: inline-block;">[{{ error }}]</span>
+            {% endfor %}
         </div>
         <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="useremail" placeholder="E-Mail Address" type="text">
+            {{ form.email(class="form-control", autofocus="on", autocomplete="off", placeholder="E-Mail", type="text") }}
+            {% for error in form.email.errors %}
+            <span style="color: red; width:50px; display: inline-block;">[{{ error }}]</span>
+            {% endfor %}
         </div>
         <div class="form-group">
-            <input class="form-control" name="password" placeholder="Password" type="password">
+            {{ form.password(class="form-control", autofocus="on", autocomplete="off", placeholder="Password", type="text") }}
+            {% for error in form.password.errors %}
+            <span style="color: red; width:50px; display: inline-block;">[{{ error }}]</span>
+            {% endfor %}
         </div>
-        <button class="btn btn-primary" type="submit">Register</button>
+        <div class="form-group">
+            {{ form.password2(class="form-control", autofocus="on", autocomplete="off", placeholder="Repeat Password", type="text") }}
+            {% for error in form.password2.errors %}
+            <span style="color: red; width:50px; display: inline-block;">[{{ error }}]</span>
+            {% endfor %}
+        </div>
+        <div><p>{{ form.submit(class="btn btn-primary") }}</p></div>
     </form>
 {% endblock %}

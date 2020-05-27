@@ -8,12 +8,14 @@ from flask_session import Session
 
 from tempfile import mkdtemp
 from werkzeug.exceptions import default_exceptions, HTTPException, InternalServerError
+from werkzeug.urls import url_parse
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 
 import json
 
+from app import db
 from app.models import User
-from app.forms import LoginForm
+from app.forms import LoginForm, RegistrationForm
 from app.helpers import errordisplay
 
 @app.route("/")
@@ -24,52 +26,22 @@ def index():
     return render_template("index.html")
 
 
-@app.route("/register", methods=["GET", "POST"])
+@app.route('/register', methods=['GET', 'POST'])
 def register():
     """Register user"""
-    """use generate_password_hash from werkzeug to create pwdhash from provided password"""
-    # User reached route via POST (as by submitting a form via POST)
-    if request.method == "POST":
-        
-        # store form inputs in variables
-        username = request.form.get("username")
-        useremail = request.form.get("useremail")
-        password = request.form.get("password")
-
-        # Ensure username was submitted
-        if not username:
-            return errordisplay("must provide username", 403)
-
-        # Ensure username was submitted
-        elif not useremail:
-            return errordisplay("must provide mail address", 403)
-
-        # Ensure password was submitted
-        elif not password:
-            return errordisplay("must provide password", 403)
-
-        # Query database for username and check, if username exists already  
-        # 
-        user = User.query.get(username)
-        if not user:
-            #hash password
-            pwdhash = generate_password_hash(password, "sha256")
-
-            # make new entry in db for new user
-            user = User(username, useremail, pwdhash)
-            db.session.add(user)
-            flash("Your account has been created. Enjoy!")           
-        else:                  
-            return errordisplay("username already exists, please choose another username or login", 403)
-
-        # Log in user directly after registration and redirect to home page
-        session["username"] = username
-        return redirect(url_for("index"))
-        # alternatively instead of logging in directly: Redirect user to login page: return redirect("/login")
-
-        # User reached route via GET (as by clicking a link or via redirect)
-    else:
-        return render_template("register.html")
+    
+    if current_user.is_authenticated:
+        return redirect(url_for('index'))
+    form = RegistrationForm()
+    if form.validate_on_submit():
+        user = User(username=form.username.data, useremail=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        flash('Congratulations, you are registered!')
+        return redirect(url_for('login'))
+    return render_template('register.html', form=form)
+    
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

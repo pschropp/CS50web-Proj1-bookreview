@@ -17,13 +17,15 @@
         </p>
         <p>
             <!-- {{ form.password.label }}<br> -->
-            {{ form.password(class="form-control", autofocus="off", autocomplete="off", placeholder="E-Mail Address", type="text") }}
+            {{ form.password(class="form-control", autofocus="off", autocomplete="off", placeholder="Password", type="text") }}
             {% for error in form.password.errors %}
             <span style="color: red; width:50px; display: inline-block;">[{{ error }}]</span>
             {% endfor %}
         </p>
         <p>{{ form.remember_me() }} {{ form.remember_me.label }}</p>
         <p>{{ form.submit(class="btn btn-primary") }}</p>
+        <!-- <p>New User? <a href="{{ url_for('register') }}">Click to Register!</a></p> -->
+        <a class="btn btn-secondary" type="button" href="{{ url_for('register') }}">Register</a>
     </form>
     
 {% endblock %}
