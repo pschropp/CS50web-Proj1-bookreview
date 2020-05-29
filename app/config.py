@@ -1,8 +1,16 @@
 import os
+from dotenv import load_dotenv
+
+
+# load dotenv in the base root
+APP_ROOT = os.path.join(os.path.dirname(__file__), '..')   # refers to application_top
+dotenv_path = os.path.join(APP_ROOT, '.env')
+load_dotenv(dotenv_path)
+
 
 class Config(object):
-    #app secret key
-    SECRET_KEY = os.environ.get('SECRET_KEY') or '65421231564897654351'
+    #app secret key loaded from .env file
+    SECRET_KEY = os.getenv('SECRET_KEY') or "super-secret-key-that-should-be-replaced-by-a-proper-one"
 
     #database configurations
     SQLALCHEMY_DATABASE_URI = os.getenv("DATABASE_URL")
@@ -17,7 +25,8 @@ class Config(object):
     SESSION_TYPE = "filesystem"
 
     # Set API-Key for Goodreads, got from Goodreads after registration for API access
-    GR_API_Key = "***REMOVED***"
+    #GR_API_Key = "***REMOVED***"
+    GR_API_Key = os.getenv("GR_API_Key")#from .env file
 
 
 """
