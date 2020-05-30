@@ -1,5 +1,7 @@
 import os
 import requests
+import logging
+from logging.handlers import RotatingFileHandler
 
 from flask import Flask, session, request
 from flask_session import Session
@@ -27,8 +29,20 @@ if not os.getenv("DATABASE_URL"):
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Configure session to use filesystem, according to imported configurations#
-#Session(app)
-
 # routes.py and own model file with classes for ORM (has to be done after app = Flask(__name__) and after initiating db since that one is imported by models
 from app import routes, models, errors
+
+
+# add logging
+if not app.debug:
+    if not os.path.exists('logs'):
+        os.mkdir('logs')
+    file_handler = RotatingFileHandler('logs/bookapp.log', maxBytes=10240,
+                                       backupCount=10)
+    file_handler.setFormatter(logging.Formatter(
+        '%(asctime)s %(levelname)s: %(message)s [in %(pathname)s:%(lineno)d]'))
+    file_handler.setLevel(logging.INFO)
+    app.logger.addHandler(file_handler)
+
+    app.logger.setLevel(logging.INFO)
+    app.logger.info('Bookapp startup')
