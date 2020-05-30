@@ -2,6 +2,7 @@ from app import app
 
 import os
 import requests
+import json
 
 from flask import Flask, session, flash, jsonify, redirect, render_template, request, url_for
 from flask_session import Session
@@ -11,18 +12,16 @@ from werkzeug.exceptions import default_exceptions, HTTPException, InternalServe
 from werkzeug.urls import url_parse
 from flask_login import LoginManager, current_user, login_user, logout_user, login_required
 
-import json
-
 from app import db
 from app.models import User
 from app.forms import LoginForm, RegistrationForm
-#from app.helpers import errordisplay
+
 
 @app.route("/")
 @app.route("/index") 
 @login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined by flask-login, set-up in __init__.py
 def index():
-    #this renders the searchforms, if user is logged in
+    """ Render searchform, if user is logged in """
     return render_template("index.html")
 
 

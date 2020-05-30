@@ -25,7 +25,6 @@ class Config(object):
     SESSION_TYPE = "filesystem"
 
     # Set API-Key for Goodreads, got from Goodreads after registration for API access
-    #GR_API_Key = "***REMOVED***"
     GR_API_Key = os.getenv("GR_API_Key")#from .env file
 
 

@@ -8,8 +8,6 @@ from flask_session import Session
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
-#from sqlalchemy import create_engine
-#from sqlalchemy.orm import scoped_session, sessionmaker
 from app.config import Config
 
 
@@ -33,7 +31,7 @@ migrate = Migrate(app, db)
 from app import routes, models, errors
 
 
-# add logging
+# add logging to file via rotating file handler
 if not app.debug:
     if not os.path.exists('logs'):
         os.mkdir('logs')
