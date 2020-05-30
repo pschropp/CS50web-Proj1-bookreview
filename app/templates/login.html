@@ -17,7 +17,7 @@
         </p>
         <p>
             <!-- {{ form.password.label }}<br> -->
-            {{ form.password(class="form-control", autofocus="off", autocomplete="off", placeholder="Password", type="text") }}
+            {{ form.password(class="form-control", autofocus="off", autocomplete="off", placeholder="Password", type="password") }}
             {% for error in form.password.errors %}
             <span style="color: red; width:50px; display: inline-block;">[{{ error }}]</span>
             {% endfor %}

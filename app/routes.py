@@ -16,7 +16,7 @@ import json
 from app import db
 from app.models import User
 from app.forms import LoginForm, RegistrationForm
-from app.helpers import errordisplay
+#from app.helpers import errordisplay
 
 @app.route("/")
 @app.route("/index") 
@@ -73,7 +73,7 @@ def logout():
 
 
 @app.route("/searchresults", methods=["GET", "POST"])
-@login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
+@login_required     #decorator to only show page, if logged in. if not, redirect to login page.
 def searchresults():
     """generate and render search results for book search"""
 
@@ -104,7 +104,7 @@ def searchresults():
             
             # no inputs specified
         else:
-            return errordisplay("must provide at least one search criterion", 403)
+            return render_template('error.html', errormsg="you must provide at least one search criterion", errorcode=403), 403
 
      # User reached route via GET (mainly via search link in navbar)
     else:
@@ -113,7 +113,7 @@ def searchresults():
 
 
 @app.route("/bookdetails/<string:isbn>") # build route with variable for isbn, isbn passed from bookdetails-link
-@login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
+@login_required     #decorator to only show page, if logged in. if not, redirect to login page.
 def bookdetails(isbn):
     """generate and render search results for book search"""
     details = []
@@ -157,7 +157,7 @@ def bookdetails(isbn):
     
 
 @app.route("/composereview/<string:isbn>", methods=["GET", "POST"]) # build route with variable for isbn, isbn passed from bookdetails-link
-@login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
+@login_required     #decorator to only show page, if logged in. if not, redirect to login page.
 def composereview(isbn):
     """generate and render search results for book search"""
 
@@ -170,16 +170,17 @@ def composereview(isbn):
             return render_template("composereview.html", isbn=isbn, title=book.title, author=book.author, year=book.year)
 
         else: #i.e. if user has already written a review for that isbn
-            return errordisplay("You have already written a review for this book", 403) 
+            return render_template('error.html', errormsg="You have already written a review for this book", errorcode=403), 403
+            
     
     elif request.method == "POST":
         # take review from reviewtextfield on composereview.html and radiobutton rating and save in db table reviews
         rev_rating = request.form.get("ratingRadioOptions")
         rev_text = request.form.get("reviewtextfield")
         if rev_rating == None:
-            return errordisplay("Please rate the book (1 - 5)", 403)
+            return render_template('error.html', errormsg="Please rate the book (1 - 5)", errorcode=403), 403
         if len(rev_text) == 0 or len(rev_text) > 9999:
-            return errordisplay("Please enter a review text (1-9999 characters)", 403)
+            return render_template('error.html', errormsg="Please enter a review text (1-9999 characters)", errorcode=403), 403
  
         db.execute("INSERT INTO reviews (isbn, username, rev_rating, rev_text) VALUES (:isbn, :username, :rev_rating, :rev_text)", #pylint: disable=no-member
                         {"isbn": isbn, "username": session["username"], "rev_rating": rev_rating, "rev_text": rev_text})
@@ -194,7 +195,7 @@ def api(isbn):
     """API to return bookdetails when isbn is passed"""
 
     if request.method == "POST":
-        return errordisplay("Method Not Allowed: POST requests not allowed for this API-call", 405)
+        return render_template('error.html', errormsg="Method Not Allowed: POST requests not allowed for this API-call", errorcode=405), 405
 
     if request.method == "GET":
         try:
@@ -231,16 +232,3 @@ def api(isbn):
             #return json.dumps({"error_msg": "ISBN not in our database", "error_code": 404}), 404   , works but better with jsonify, firefox does work better with that header
             return jsonify({"error_msg": "ISBN not in our database", "error_code": 404}), 404
 
-
-
-
-# Errorhandling
-def errorhandler(e):
-    """Handle error"""
-    if not isinstance(e, HTTPException):
-        e = InternalServerError()
-    return errordisplay(e.name, e.code)
-
-# Listen for errors
-for code in default_exceptions:
-    app.errorhandler(code)(errorhandler)

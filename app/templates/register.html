@@ -24,13 +24,13 @@
             {% endfor %}
         </div>
         <div class="form-group">
-            {{ form.password(class="form-control", autofocus="on", autocomplete="off", placeholder="Password", type="text") }}
+            {{ form.password(class="form-control", autofocus="on", autocomplete="off", placeholder="Password", type="password") }}
             {% for error in form.password.errors %}
             <span style="color: red; width:50px; display: inline-block;">[{{ error }}]</span>
             {% endfor %}
         </div>
         <div class="form-group">
-            {{ form.password2(class="form-control", autofocus="on", autocomplete="off", placeholder="Repeat Password", type="text") }}
+            {{ form.password2(class="form-control", autofocus="on", autocomplete="off", placeholder="Repeat Password", type="password") }}
             {% for error in form.password2.errors %}
             <span style="color: red; width:50px; display: inline-block;">[{{ error }}]</span>
             {% endfor %}

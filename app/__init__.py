@@ -10,6 +10,7 @@ from flask_login import LoginManager
 #from sqlalchemy.orm import scoped_session, sessionmaker
 from app.config import Config
 
+
 app = Flask(__name__)
 
 #importing configurations from config.py
@@ -26,8 +27,8 @@ if not os.getenv("DATABASE_URL"):
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-# Configure session to use filesystem, according to imported configurations
-Session(app)
+# Configure session to use filesystem, according to imported configurations#
+#Session(app)
 
 # routes.py and own model file with classes for ORM (has to be done after app = Flask(__name__) and after initiating db since that one is imported by models
-from app import routes, models 
+from app import routes, models, errors
