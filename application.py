@@ -46,7 +46,7 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 # Set API-Key for Goodreads, got from Goodreads after registration for API access
-GR_API_Key = "***REMOVED***"
+GR_API_Key = "uOl7cU35PPDAUm20ui6TCQ"
 
 @app.route("/") 
 @login_required     #decorator to only show page, if logged in. if not, redirect to login page. defined in helpers.py
