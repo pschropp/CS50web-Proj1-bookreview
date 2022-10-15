@@ -1,5 +1,5 @@
-# Project 1 as ORM
+# CS50 Project1 as ORM
 
-CS50web Project1: Unsing Flask for BookReview page with Heroku PostreSQL and Goodreads API
+CS50web Project1: Using Flask for BookReview page with Heroku PostgreSQL and Goodreads API
 
 For practice: new branch using ORM
