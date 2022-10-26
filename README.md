@@ -22,6 +22,7 @@ Once they log in, they can search for books, leave reviews for individual books,
 A third-party API by Goodreads, another book review website, is used to pull in ratings from a broader audience. 
 Finally, users are able to query for book details and book reviews programmatically via the website’s API.
 
+
 ### Setup <a name="setup"></a>
 1. Clone this repo or download it as a zip file and unzip it.
 2. In a terminal window, navigate into the project folder.
@@ -33,3 +34,29 @@ debugger and will automatically reload your web application whenever you save a 
 5. Set the environment variable `DATABASE_URL` to be the URI of your database, which you should be able to see from the credentials page on Heroku.
 6. Run flask run to start up your Flask application.
 
+
+### Repository Structure <a name="structure"></a>
+Again, pay attention that there are two versions of the project on two different branches. Due to different files and folders no detailed description will be given here.
+
+For branch Proj1_ORM, the most important files are placed in the app folder. The main file, named bookreview.py, is placed in the root folder, as are supporting scripts and files (to initially populate the database with some reviews etc.).
+
+Also there are cached files etc., which, with today's knowledge would have been handled differently (.gitignore). 
+
+app  
+ ┣ static
+ ┃ ┣ bookicon.ico
+ ┃ ┗ styles.css
+ ┣ templates
+ ┃ ┣ bookdetails.html #details on each book
+ ┃ ┣ layout.html #main layout template 
+ ┃ ┣ index.html #main page of the website 
+ ┃ ┗ ...
+ ┗ run.py #File runs the webapp  
+
+
+### Usage <a name="usage"></a>
+Browse to your website, depending on how you start / host the app, the url may vary.
+
+
+### License and Acknowledgements <a name="license"></a>
+Feel free to use the code in any way you like to.
