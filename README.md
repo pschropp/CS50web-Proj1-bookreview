@@ -43,17 +43,17 @@ For branch Proj1_ORM, the most important files are placed in the app folder. The
 Also there are cached files etc., which, with today's knowledge would have been handled differently (.gitignore). 
 
 app  
- ┣ static
- ┃ ┣ bookicon.ico
- ┃ ┗ styles.css
- ┣ templates
- ┃ ┣ bookdetails.html #details on each book
- ┃ ┣ layout.html #main layout template 
- ┃ ┣ index.html #main page of the website 
- ┃ ┗ ...
+ ┣ static  
+ ┃ ┣ bookicon.ico  
+ ┃ ┗ styles.css  
+ ┣ templates  
+ ┃ ┣ bookdetails.html #details on each book  
+ ┃ ┣ layout.html #main layout template   
+ ┃ ┣ index.html #main page of the website   
+ ┃ ┗ ...  
  ┗ run.py #File runs the webapp  
 
-
+ 
 ### Usage <a name="usage"></a>
 Browse to your website, depending on how you start / host the app, the url may vary.
 
